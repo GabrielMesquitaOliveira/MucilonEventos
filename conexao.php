@@ -2,8 +2,7 @@
 $server = "localhost";
 $nome = "root";
 $senha = "";
-$bancodados = "muciloneventos";
+$bancodados = "evento";
 
 // Criar conexão
 $con = new mysqli($server, $nome, $senha, $bancodados);
-
