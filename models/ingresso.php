@@ -2,7 +2,7 @@
 
 class Ingresso
 {
-    public $con;
+    private $con;
 
     public function __construct()
     {
