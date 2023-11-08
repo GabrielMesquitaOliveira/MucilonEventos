@@ -41,12 +41,11 @@ class artista
     {
         $sql = "SELECT * FROM artista WHERE nome LIKE '%$artista%'";
         $result = $this->con->query($sql);
-
-        if ($result->num_rows > 0) {
-            return $result;
-        } else {
-            return false;
-        }
+        $rows = array();
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+            }
+        return $rows;
     }
 
     public function excluirArtista(int $artista)
