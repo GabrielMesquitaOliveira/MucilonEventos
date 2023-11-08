@@ -8,12 +8,7 @@ class organizador
     public function __construct()
     {
         include 'conexao.php';
-        $this->con = new mysqli($server, $nome, $senha, $bancodados);
-        if (mysqli_connect_error()) {
-            trigger_error("falha ao conectar");
-        } else {
-            $this->con;
-        }
+        $this->con = $con;
     }
 
     public function criarOrganizador($nome, $email)
@@ -35,7 +30,7 @@ class organizador
         $sql = "SELECT organizador.nome
         FROM evento
         INNER JOIN organizador ON evento.organizador_id = organizador.id
-        WHERE organizador.nome LIKE '%" .$organizador."%'";
+        WHERE organizador.nome LIKE '%" . $organizador . "%'";
 
         $result = $this->con->query($sql);
         $rows = array();
@@ -47,33 +42,32 @@ class organizador
 
     public function buscarOrganizadorId($organizador)
     {
-    $sql = "SELECT * FROM organizador WHERE id = $organizador";
-    $result = $this->con->query($sql);
+        $sql = "SELECT * FROM organizador WHERE id = $organizador";
+        $result = $this->con->query($sql);
 
-    if ($result->num_rows > 0) {
-        // Ingresso encontrado, retornar o resultado
-        return $result;
-    } else {
-        // Ingresso não encontrado, retornar falso
-        return false;
-    }
+        if ($result->num_rows > 0) {
+            // Ingresso encontrado, retornar o resultado
+            return $result;
+        } else {
+            // Ingresso não encontrado, retornar falso
+            return false;
+        }
     }
     public function excluirOrganizador(int $organizador)
     {
-    $organizadorExistente = $this->buscarOrganizadorId($organizador);
+        $organizadorExistente = $this->buscarOrganizadorId($organizador);
 
-    if ($organizadorExistente) {
-        $sql = "DELETE FROM organizador WHERE id = $organizador";
-        $result = $this->con->query($sql);
+        if ($organizadorExistente) {
+            $sql = "DELETE FROM organizador WHERE id = $organizador";
+            $result = $this->con->query($sql);
 
-        if ($result) {
-            echo "Organizador excluido com sucesso!";
+            if ($result) {
+                echo "Organizador excluido com sucesso!";
+            } else {
+                echo "Erro ao excluir organizador: " . mysqli_error($this->con);
+            }
         } else {
-            echo "Erro ao excluir organizador: " . mysqli_error($this->con);
+            echo "organizador não existe";
         }
-    } else {
-        echo "organizador não existe";
-    }
     }
 }
-?>    

@@ -1,4 +1,4 @@
-<?php 
+<?php
 class local
 {
 
@@ -7,12 +7,7 @@ class local
     public function __construct()
     {
         include 'conexao.php';
-        $this->con = new mysqli($server, $nome, $senha, $bancodados);
-        if (mysqli_connect_error()) {
-            trigger_error("falha ao conectar");
-        } else {
-            $this->con;
-        }
+        $this->con = $con;
     }
 
     public function criarLocal($capacidade, $localidade, $area)
@@ -34,7 +29,7 @@ class local
         $sql = "SELECT local.area
         FROM evento
         INNER JOIN local ON evento.local_id = local.id
-        WHERE local.area LIKE '%" .$local."%'";
+        WHERE local.area LIKE '%" . $local . "%'";
 
         $result = $this->con->query($sql);
         $rows = array();
@@ -46,33 +41,32 @@ class local
 
     public function buscarLocalId($local)
     {
-    $sql = "SELECT * FROM local WHERE id = $local";
-    $result = $this->con->query($sql);
+        $sql = "SELECT * FROM local WHERE id = $local";
+        $result = $this->con->query($sql);
 
-    if ($result->num_rows > 0) {
-        // Ingresso encontrado, retornar o resultado
-        return $result;
-    } else {
-        // Ingresso não encontrado, retornar falso
-        return false;
-    }
+        if ($result->num_rows > 0) {
+            // Ingresso encontrado, retornar o resultado
+            return $result;
+        } else {
+            // Ingresso não encontrado, retornar falso
+            return false;
+        }
     }
     public function excluirLocal(int $local)
     {
-    $localExistente = $this->buscarLocalId($local);
+        $localExistente = $this->buscarLocalId($local);
 
-    if ($localExistente) {
-        $sql = "DELETE FROM local WHERE id = $local";
-        $result = $this->con->query($sql);
+        if ($localExistente) {
+            $sql = "DELETE FROM local WHERE id = $local";
+            $result = $this->con->query($sql);
 
-        if ($result) {
-            echo "local excluido com sucesso!";
+            if ($result) {
+                echo "local excluido com sucesso!";
+            } else {
+                echo "Erro ao excluir local: " . mysqli_error($this->con);
+            }
         } else {
-            echo "Erro ao excluir local: " . mysqli_error($this->con);
+            echo "local não existe";
         }
-    } else {
-        echo "local não existe";
-    }
     }
 }
-?>    
