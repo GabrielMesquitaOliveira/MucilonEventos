@@ -37,23 +37,21 @@ class artista
         return $rows;
     }
 
-    public function buscarArtistaId($artista)
+    public function buscarArtistaNome($artista)
     {
-        $sql = "SELECT * FROM artista WHERE id = $artista";
+        $sql = "SELECT * FROM artista WHERE nome LIKE '%$artista%'";
         $result = $this->con->query($sql);
 
         if ($result->num_rows > 0) {
-
             return $result;
         } else {
-
             return false;
         }
     }
 
     public function excluirArtista(int $artista)
     {
-        $artistaExistente = $this->buscarArtistaId($artista);
+        $artistaExistente = $this->buscarArtista($artista);
 
         if ($artistaExistente) {
             $sql = "DELETE FROM artista WHERE id = $artista";
