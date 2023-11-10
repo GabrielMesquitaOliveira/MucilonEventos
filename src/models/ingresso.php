@@ -20,6 +20,11 @@ class Ingresso
             if ($stmt->execute() === false) {
                 trigger_error("Erro ao criar ingresso: " . $stmt->error);
             }
+
+            require 'evento.php';
+            $evento = new Evento;
+            $evento->subtrairContator($idEvento);
+
         }
         $stmt->close();
     }

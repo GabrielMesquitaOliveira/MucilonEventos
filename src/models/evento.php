@@ -1,5 +1,7 @@
 <?php
 
+namespace App\models\Evento;
+
 class Evento
 {
     private $con;
@@ -67,6 +69,13 @@ class Evento
             $eventos[] = $evento;
         }
 
-        return $eventos;
+        var_dump($eventos); 
+    }
+
+    public function subtrairContator($id)
+    {
+        $result = $this->con->query("UPDATE evento SET contador = contador - 1 WHERE id = '$id'");
+        return $result;
+        
     }
 }
