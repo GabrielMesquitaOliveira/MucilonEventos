@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Settings\SettingsInterface;
+use App\models\Evento;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -26,5 +27,6 @@ return function (ContainerBuilder $containerBuilder) {
 
             return $logger;
         },
+        App\models\Evento::class => DI\autowire(),
     ]);
 };

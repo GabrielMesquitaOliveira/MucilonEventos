@@ -1,8 +1,24 @@
 <?php
-$server = "localhost";
-$nome = "root";
-$senha = "";
-$bancodados = "evento";
 
-// Criar conexão
-$con = new mysqli($server, $nome, $senha, $bancodados);
+namespace App\models;
+
+class Conexao
+{
+    protected static $con;
+
+    public static function conectar()
+    {
+        self::$con = new \mysqli("localhost", "root", "", "evento");
+        if (mysqli_connect_error()) {
+            trigger_error("Falha ao conectar: " . mysqli_connect_error());
+        }
+    }
+
+    public static function getConexao()
+    {
+        if (!self::$con) {
+            self::conectar();
+        }
+        return self::$con;
+    }
+}

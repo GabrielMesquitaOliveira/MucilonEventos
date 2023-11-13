@@ -1,20 +1,16 @@
 <?php
 
-namespace App\models\Evento;
+namespace App\models;
 
-class Evento
+use App\models\Conexao;
+
+class Evento extends Conexao
 {
-    private $con;
+    private static $con;
 
-    public function __construct()
+    public static function criarEvento($nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador)
     {
-        include 'conexao.php';
-        $this->con = $con;
-    }
-
-    public function criarEvento($nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador)
-    {
-        $stmt = $this->con->prepare("INSERT INTO evento (nome_evento, data_evento, local, descricao, artista_id, categoria_id, evento_id, local_id, contador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = self::getConexao()->prepare("INSERT INTO evento (nome_evento, data_evento, local, descricao, artista_id, categoria_id, evento_id, local_id, contador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssiiiii", $nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador);
 
         if ($stmt->execute()) {
@@ -24,9 +20,9 @@ class Evento
         }
     }
 
-    public function obterEvento($id)
+    public static function obterEvento($id)
     {
-        $stmt = $this->con->prepare("SELECT * FROM evento WHERE id = ?");
+        $stmt = self::$con->prepare("SELECT * FROM evento WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
 
@@ -36,9 +32,9 @@ class Evento
         return $evento;
     }
 
-    public function atualizarEvento($id, $nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador)
+    public static function atualizarEvento($id, $nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador)
     {
-        $stmt = $this->con->prepare("UPDATE evento SET nome_evento = ?, data_evento = ?, local = ?, descricao = ?, artista_id = ?, categoria_id = ?, evento_id = ?, local_id = ?, contador = ? WHERE id = ?");
+        $stmt = self::$con->prepare("UPDATE evento SET nome_evento = ?, data_evento = ?, local = ?, descricao = ?, artista_id = ?, categoria_id = ?, evento_id = ?, local_id = ?, contador = ? WHERE id = ?");
         $stmt->bind_param("ssssiiiiii", $nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador, $id);
 
         if ($stmt->execute()) {
@@ -48,9 +44,9 @@ class Evento
         }
     }
 
-    public function excluirEvento($id)
+    public static function excluirEvento($id)
     {
-        $stmt = $this->con->prepare("DELETE FROM evento WHERE id = ?");
+        $stmt = self::$con->prepare("DELETE FROM evento WHERE id = ?");
         $stmt->bind_param("i", $id);
 
         if ($stmt->execute()) {
@@ -60,22 +56,22 @@ class Evento
         }
     }
 
-    public function listarEventos()
+    public static function listarEventos()
     {
-        $result = $this->con->query("SELECT * FROM evento");
+        $result = self::$con->query("SELECT * FROM evento");
 
         $eventos = array();
         while ($evento = $result->fetch_assoc()) {
             $eventos[] = $evento;
         }
 
-        var_dump($eventos); 
+        return $eventos;
     }
 
-    public function subtrairContator($id)
+    public static function subtrairContator($id)
     {
-        $result = $this->con->query("UPDATE evento SET contador = contador - 1 WHERE id = '$id'");
+        $result = self::$con->query("UPDATE evento SET contador = contador - 1 WHERE id = '$id'");
         return $result;
-        
     }
+
 }
