@@ -27,6 +27,5 @@ return function (ContainerBuilder $containerBuilder) {
 
             return $logger;
         },
-        App\models\Evento::class => DI\autowire(),
     ]);
 };

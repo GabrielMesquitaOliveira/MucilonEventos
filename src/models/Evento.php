@@ -6,8 +6,6 @@ use App\models\Conexao;
 
 class Evento extends Conexao
 {
-    private static $con;
-
     public static function criarEvento($nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador)
     {
         $stmt = self::getConexao()->prepare("INSERT INTO evento (nome_evento, data_evento, local, descricao, artista_id, categoria_id, evento_id, local_id, contador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -22,7 +20,7 @@ class Evento extends Conexao
 
     public static function obterEvento($id)
     {
-        $stmt = self::$con->prepare("SELECT * FROM evento WHERE id = ?");
+        $stmt = self::getConexao()->prepare("SELECT * FROM evento WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
 
@@ -34,7 +32,7 @@ class Evento extends Conexao
 
     public static function atualizarEvento($id, $nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador)
     {
-        $stmt = self::$con->prepare("UPDATE evento SET nome_evento = ?, data_evento = ?, local = ?, descricao = ?, artista_id = ?, categoria_id = ?, evento_id = ?, local_id = ?, contador = ? WHERE id = ?");
+        $stmt = self::getConexao()->prepare("UPDATE evento SET nome_evento = ?, data_evento = ?, local = ?, descricao = ?, artista_id = ?, categoria_id = ?, evento_id = ?, local_id = ?, contador = ? WHERE id = ?");
         $stmt->bind_param("ssssiiiiii", $nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador, $id);
 
         if ($stmt->execute()) {
@@ -46,7 +44,7 @@ class Evento extends Conexao
 
     public static function excluirEvento($id)
     {
-        $stmt = self::$con->prepare("DELETE FROM evento WHERE id = ?");
+        $stmt = self::getConexao()->prepare("DELETE FROM evento WHERE id = ?");
         $stmt->bind_param("i", $id);
 
         if ($stmt->execute()) {
@@ -58,7 +56,7 @@ class Evento extends Conexao
 
     public static function listarEventos()
     {
-        $result = self::$con->query("SELECT * FROM evento");
+        $result = self::getConexao()->query("SELECT * FROM evento");
 
         $eventos = array();
         while ($evento = $result->fetch_assoc()) {
@@ -68,9 +66,9 @@ class Evento extends Conexao
         return $eventos;
     }
 
-    public static function subtrairContator($id)
+    public static function subtrairContador($id)
     {
-        $result = self::$con->query("UPDATE evento SET contador = contador - 1 WHERE id = '$id'");
+        $result = self::getConexao()->query("UPDATE evento SET contador = contador - 1 WHERE id = '$id'");
         return $result;
     }
 

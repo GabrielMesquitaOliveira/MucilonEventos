@@ -8,7 +8,6 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 use Slim\Interfaces\RouteCollectorProxyInterface as Group;
-use App\models\Evento;
 
 return function (App $app) {
     $app->options('/{routes:.*}', function (Request $request, Response $response) {
@@ -18,11 +17,6 @@ return function (App $app) {
 
     $app->get('/', function (Request $request, Response $response) {
         $response->getBody()->write('Home');
-        return $response;
-    });
-
-    $app->get('/eventos', function (Request $request, Response $response) {
-        $response->getBody()->write('Deve listar todos os eventos!');
         return $response;
     });
 
@@ -36,12 +30,6 @@ return function (App $app) {
         $group->get('/{id}', ViewUserAction::class);
     });
 
-    $app->group('/evento', function (Group $group) {
+    require_once('routes/evento.php');
 
-        $group->get('', function (Request $request, Response $response, $args) {
-            $response->getBody()->write(json_encode(Evento::listarEventos()));
-            return $response->withHeader('Content-Type', 'application/json');
-        });
-    
-    });
 };
