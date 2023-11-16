@@ -1,20 +1,16 @@
 <?php
 
-class Cliente
+namespace App\models;
+
+use App\models\Conexao;
+
+class Cliente extends Conexao
 {
-    private $con;
-
-    public function __construct()
-    {
-        include 'conexao.php';
-        $this->con = $con;
-    }
-
-    public function criarCliente($nome, $email, $senha, $telefone)
+    public static function criarCliente($nome, $email, $senha, $telefone)
     {
         $senhaHash = password_hash($senha, PASSWORD_BCRYPT);
 
-        $stmt = $this->con->prepare("INSERT INTO cliente (nome, email, senha, telefone) VALUES (?, ?, ?, ?)");
+        $stmt = self::getConexao()->prepare("INSERT INTO cliente (nome, email, senha, telefone) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("ssss", $nome, $email, $senhaHash, $telefone);
 
         if ($stmt->execute()) {
@@ -24,9 +20,9 @@ class Cliente
         }
     }
 
-    public function obterCliente($id)
+    public static function obterCliente($id)
     {
-        $stmt = $this->con->prepare("SELECT * FROM cliente WHERE id = ?");
+        $stmt = self::getConexao()->prepare("SELECT * FROM cliente WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
 
@@ -36,9 +32,9 @@ class Cliente
         return $cliente;
     }
 
-    public function atualizarCliente($id, $nome, $email, $telefone)
+    public static function atualizarCliente($id, $nome, $email, $telefone)
     {
-        $stmt = $this->con->prepare("UPDATE cliente SET nome = ?, email = ?, telefone = ? WHERE id = ?");
+        $stmt = self::getConexao()->prepare("UPDATE cliente SET nome = ?, email = ?, telefone = ? WHERE id = ?");
         $stmt->bind_param("sssi", $nome, $email, $telefone, $id);
 
         if ($stmt->execute()) {
@@ -48,9 +44,9 @@ class Cliente
         }
     }
 
-    public function excluirCliente($id)
+    public static function excluirCliente($id)
     {
-        $stmt = $this->con->prepare("DELETE FROM cliente WHERE id = ?");
+        $stmt = self::getConexao()->prepare("DELETE FROM cliente WHERE id = ?");
         $stmt->bind_param("i", $id);
 
         if ($stmt->execute()) {
@@ -60,9 +56,9 @@ class Cliente
         }
     }
 
-    public function listarClientes()
+    public static function listarClientes()
     {
-        $result = $this->con->query("SELECT * FROM cliente");
+        $result = self::getConexao()->query("SELECT * FROM cliente");
 
         $clientes = array();
         while ($cliente = $result->fetch_assoc()) {

@@ -1,36 +1,34 @@
 <?php
 
-class categoria
+namespace App\models;
+
+use App\models\Conexao;
+
+class Categoria extends Conexao
 {
-
-    private $con;
-
-    public function __construct()
+    public static function criarCategoria($nome)
     {
-        include 'conexao.php';
-        $this->con = $con;
-    }
-    public function criarCategoria($nome)
-    {
+        $stmt = self::getConexao()->prepare("INSERT INTO categoria (nome) VALUES (?)");
+        $stmt->bind_param("s", $nome);
 
-        $sql = "INSERT INTO categoria (nome) VALEUS ('$nome')";
-
-        $result = $this->con->query($sql);
-
-        if ($result) {
-            echo 'Categoria criado com sucesso';
+        if ($stmt->execute()) {
+            return 'Categoria criada com sucesso';
         } else {
-            echo "Erro ao criar categoria:" . mysqli_error($this->con);
+            return "Erro ao criar categoria: " . $stmt->error;
         }
     }
-    public function buscarCategoria($categoria)
-    {
-        $sql = "SELECT categoria.nome 
-        FROM evento
-        INNER JOIN categoria ON evento.categoria_id = categoria.id 
-        WHERE categoria.nome LIKE '%" . $categoria . "%' ";
 
-        $result = $this->con->query($sql);
+    public static function buscarCategoria($categoria)
+    {
+        $stmt = self::getConexao()->prepare("SELECT categoria.nome 
+            FROM evento
+            INNER JOIN categoria ON evento.categoria_id = categoria.id 
+            WHERE categoria.nome LIKE ?");
+        $categoriaParam = "%$categoria%";
+        $stmt->bind_param("s", $categoriaParam);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
         $rows = array();
         while ($row = $result->fetch_assoc()) {
             $rows[] = $row;
@@ -38,32 +36,30 @@ class categoria
         return $rows;
     }
 
-    public function buscarCategoriaId($categoria)
+    public static function buscarCategoriaId($categoria)
     {
-        $sql = "SELECT * FROM categoria WHERE id = $categoria";
-        $result = $this->con->query($sql);
+        $stmt = self::getConexao()->prepare("SELECT * FROM categoria WHERE id = ?");
+        $stmt->bind_param("i", $categoria);
+        $stmt->execute();
 
+        $result = $stmt->get_result();
         if ($result->num_rows > 0) {
             return $result;
         } else {
             return false;
         }
     }
-    public function excluirCategoria(int $categoria)
+
+    public static function excluirCategoria(int $categoria)
     {
-        $categoriaExistente = $this->buscarCategoriaId($categoria);
+        $stmt = self::getConexao()->prepare("DELETE FROM categoria WHERE id = ?");
+        $stmt->bind_param("i", $categoria);
+        $stmt->execute();
 
-        if ($categoriaExistente) {
-            $sql = "DELETE FROM categoria WHERE id = $categoria";
-            $result = $this->con->query($sql);
-
-            if ($result) {
-                echo "Categoria excluida com sucesso!";
-            } else {
-                echo "Erro ao excluir categoria:" . mysqli_error($this->con);
-            }
+        if ($stmt->affected_rows > 0) {
+            return "Categoria excluída com sucesso!";
         } else {
-            echo "categoria não existe";
+            return "Erro ao excluir categoria: " . $stmt->error;
         }
     }
 }

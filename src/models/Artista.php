@@ -1,68 +1,70 @@
 <?php
 
-class artista
+namespace App\models;
+
+class Artista extends Conexao
 {
-
-    public $con;
-
-    public function __construct()
+    public static function criarArtista($nome)
     {
-        include 'conexao.php';
-        $this->con = $con;
-    }
+        $stmt = self::getConexao()->prepare("INSERT INTO artista (nome) VALUES (?)");
+        $stmt->bind_param("s", $nome);
 
-    public function criarArtista($nome)
-    {
-
-        $sql = "INSERT INTO artista (nome) VALUES ('$nome')";
-
-        $result = $this->con->query($sql);
-
-        if ($result) {
-            echo 'Artista criado com sucesso';
+        if ($stmt->execute()) {
+            return "Artista criado com sucesso!";
         } else {
-            echo "Erro ao criar artista: " . mysqli_error($this->con);
+            return "Erro ao criar artista: " . $stmt->error;
         }
     }
 
-    public function buscarArtista($artista)
+    public static function obterArtista($id)
     {
-        $sql = "SELECT * FROM artista WHERE id = $artista";
+        $stmt = self::getConexao()->prepare("SELECT * FROM artista WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
 
-        $result = $this->con->query($sql);
-        $rows = array();
-        while ($row = $result->fetch_assoc()) {
-            $rows[] = $row;
+        $result = $stmt->get_result();
+        $artista = $result->fetch_assoc();
+
+        return $artista;
+    }
+
+    public static function buscarArtistas()
+    {
+        $result = self::getConexao()->query("SELECT * FROM artista");
+
+        $artistas = array();
+        while ($artista = $result->fetch_assoc()) {
+            $artistas[] = $artista;
         }
-        return $rows;
+
+        return $artistas;
     }
 
-    public function buscarArtistaNome($artista)
+    public static function buscarArtistaPorNome($nome)
     {
-        $sql = "SELECT * FROM artista WHERE nome LIKE '%$artista%'";
-        $result = $this->con->query($sql);
-        $rows = array();
-        while ($row = $result->fetch_assoc()) {
-            $rows[] = $row;
-            }
-        return $rows;
+        $stmt = self::getConexao()->prepare("SELECT * FROM artista WHERE nome LIKE ?");
+        $likeNome = "%$nome%";
+        $stmt->bind_param("s", $likeNome);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $artistas = array();
+        while ($artista = $result->fetch_assoc()) {
+            $artistas[] = $artista;
+        }
+
+        return $artistas;
     }
 
-    public function excluirArtista(int $artista)
+    public static function excluirArtista($id)
     {
-        $artistaExistente = $this->buscarArtista($artista);
+        $stmt = self::getConexao()->prepare("DELETE FROM artista WHERE id = ?");
+        $stmt->bind_param("i", $id);
 
-        if ($artistaExistente) {
-            $sql = "DELETE FROM artista WHERE id = $artista";
-            $result = $this->con->query($sql);
-
-            if ($result) {
-                echo "Artista excluido com sucesso!";
-            } else {
-                echo "Erro ao excluir artista: " . mysqli_error($this->con);
-            }
+        if ($stmt->execute()) {
+            return "Artista excluído com sucesso!";
         } else {
-            echo "artista não existe";
+            return "Erro ao excluir artista: " . $stmt->error;
         }
     }
 }

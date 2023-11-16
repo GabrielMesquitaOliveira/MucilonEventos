@@ -1,72 +1,78 @@
 <?php
-class local
+
+namespace App\models;
+
+use App\models\Conexao;
+
+class Local extends Conexao
 {
-
-    public $con;
-
-    public function __construct()
+    public static function criarLocal($capacidade, $localidade, $area)
     {
-        include 'conexao.php';
-        $this->con = $con;
-    }
+        $stmt = self::getConexao()->prepare("INSERT INTO local (capacidade, localidade, area) VALUES (?, ?, ?)");
+        $stmt->bind_param("iss", $capacidade, $localidade, $area);
 
-    public function criarLocal($capacidade, $localidade, $area)
-    {
-
-        $sql = "INSERT INTO local (capacidade, localidade, area) VALUES ($capacidade, '$localidade', '$area')";
-
-        $result = $this->con->query($sql);
-
-        if ($result) {
-            echo 'local criado com sucesso';
+        if ($stmt->execute()) {
+            return "Local criado com sucesso!";
         } else {
-            echo "Erro ao criar local: " . mysqli_error($this->con);
+            return "Erro ao criar local: " . $stmt->error;
         }
     }
 
-    public function buscarLocal($local)
+    public static function buscarLocal($local)
     {
-        $sql = "SELECT local.area
-        FROM evento
-        INNER JOIN local ON evento.local_id = local.id
-        WHERE local.area LIKE '%" . $local . "%'";
+        $stmt = self::getConexao()->prepare("SELECT local.area FROM evento INNER JOIN local ON evento.local_id = local.id WHERE local.area LIKE ?");
+        $local = "%{$local}%";
+        $stmt->bind_param("s", $local);
+        $stmt->execute();
 
-        $result = $this->con->query($sql);
+        $result = $stmt->get_result();
         $rows = array();
         while ($row = $result->fetch_assoc()) {
             $rows[] = $row;
         }
+
         return $rows;
     }
 
-    public function buscarLocalId($local)
+    public static function buscarLocalId($local)
     {
-        $sql = "SELECT * FROM local WHERE id = $local";
-        $result = $this->con->query($sql);
+        $stmt = self::getConexao()->prepare("SELECT * FROM local WHERE id = ?");
+        $stmt->bind_param("i", $local);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            // Ingresso encontrado, retornar o resultado
             return $result;
         } else {
-            // Ingresso não encontrado, retornar falso
             return false;
         }
     }
-    public function excluirLocal(int $local)
+
+    public static function excluirLocal($local)
     {
-        $localExistente = $this->buscarLocalId($local);
+        $localExistente = self::buscarLocalId($local);
 
         if ($localExistente) {
-            $sql = "DELETE FROM local WHERE id = $local";
-            $result = $this->con->query($sql);
+            $stmt = self::getConexao()->prepare("DELETE FROM local WHERE id = ?");
+            $stmt->bind_param("i", $local);
+            $stmt->execute();
 
-            if ($result) {
-                echo "local excluido com sucesso!";
-            } else {
-                echo "Erro ao excluir local: " . mysqli_error($this->con);
-            }
+            return $stmt->affected_rows > 0 ? "Local excluído com sucesso!" : "Erro ao excluir local";
         } else {
-            echo "local não existe";
+            return "Local não existe";
         }
+    }
+
+    public static function listarLocais()
+    {
+        $result = self::getConexao()->query("SELECT * FROM local");
+
+        $locais = array();
+        while ($local = $result->fetch_assoc()) {
+            $locais[] = $local;
+        }
+
+        return $locais;
     }
 }

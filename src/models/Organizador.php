@@ -1,38 +1,34 @@
 <?php
 
-class organizador
+namespace App\models;
+
+use App\models\Conexao;
+
+class Organizador extends Conexao
 {
-
-    public $con;
-
-    public function __construct()
+    public static function criarOrganizador($nome, $email)
     {
-        include 'conexao.php';
-        $this->con = $con;
-    }
+        $stmt = self::getConexao()->prepare("INSERT INTO organizador (nome, email) VALUES (?, ?)");
+        $stmt->bind_param("ss", $nome, $email);
 
-    public function criarOrganizador($nome, $email)
-    {
-
-        $sql = "INSERT INTO organizador (nome, email) VALUES ('$nome' , '$email')";
-
-        $result = $this->con->query($sql);
-
-        if ($result) {
-            echo 'Organizador criado com sucesso';
+        if ($stmt->execute()) {
+            return 'Organizador criado com sucesso';
         } else {
-            echo "Erro ao criar Organizador: " . mysqli_error($this->con);
+            return "Erro ao criar Organizador: " . $stmt->error;
         }
     }
 
-    public function buscarOrganizador($organizador)
+    public static function buscarOrganizador($organizador)
     {
-        $sql = "SELECT organizador.nome
-        FROM evento
-        INNER JOIN organizador ON evento.organizador_id = organizador.id
-        WHERE organizador.nome LIKE '%" . $organizador . "%'";
+        $stmt = self::getConexao()->prepare("SELECT organizador.nome
+            FROM evento
+            INNER JOIN organizador ON evento.organizador_id = organizador.id
+            WHERE organizador.nome LIKE ?");
+        $organizadorParam = "%$organizador%";
+        $stmt->bind_param("s", $organizadorParam);
+        $stmt->execute();
 
-        $result = $this->con->query($sql);
+        $result = $stmt->get_result();
         $rows = array();
         while ($row = $result->fetch_assoc()) {
             $rows[] = $row;
@@ -40,34 +36,30 @@ class organizador
         return $rows;
     }
 
-    public function buscarOrganizadorId($organizador)
+    public static function buscarOrganizadorId($organizador)
     {
-        $sql = "SELECT * FROM organizador WHERE id = $organizador";
-        $result = $this->con->query($sql);
+        $stmt = self::getConexao()->prepare("SELECT * FROM organizador WHERE id = ?");
+        $stmt->bind_param("i", $organizador);
+        $stmt->execute();
 
+        $result = $stmt->get_result();
         if ($result->num_rows > 0) {
-            // Ingresso encontrado, retornar o resultado
             return $result;
         } else {
-            // Ingresso não encontrado, retornar falso
             return false;
         }
     }
-    public function excluirOrganizador(int $organizador)
+
+    public static function excluirOrganizador(int $organizador)
     {
-        $organizadorExistente = $this->buscarOrganizadorId($organizador);
+        $stmt = self::getConexao()->prepare("DELETE FROM organizador WHERE id = ?");
+        $stmt->bind_param("i", $organizador);
+        $stmt->execute();
 
-        if ($organizadorExistente) {
-            $sql = "DELETE FROM organizador WHERE id = $organizador";
-            $result = $this->con->query($sql);
-
-            if ($result) {
-                echo "Organizador excluido com sucesso!";
-            } else {
-                echo "Erro ao excluir organizador: " . mysqli_error($this->con);
-            }
+        if ($stmt->affected_rows > 0) {
+            return "Organizador excluído com sucesso!";
         } else {
-            echo "organizador não existe";
+            return "Erro ao excluir organizador: " . $stmt->error;
         }
     }
 }
