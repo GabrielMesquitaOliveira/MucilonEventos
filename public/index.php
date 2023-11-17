@@ -73,7 +73,7 @@ $app->addRoutingMiddleware();
 $app->addBodyParsingMiddleware();
 
 // Ignorar pasta do projeto da url para o funcionamento da API
-$app->setBasePath('/muciloneventos');
+// $app->setBasePath('/muciloneventos');
 
 // Add Error Middleware
 $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, $logError, $logErrorDetails);
