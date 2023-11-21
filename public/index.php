@@ -1,7 +1,9 @@
 <?php
 
+// Habilita a declaração estrita de tipos
 declare(strict_types=1);
 
+// Importa as classes necessárias
 use App\Application\Handlers\HttpErrorHandler;
 use App\Application\Handlers\ShutdownHandler;
 use App\Application\ResponseEmitter\ResponseEmitter;
@@ -10,40 +12,40 @@ use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
 
+// Autoloader do Composer para carregar classes automaticamente
 require __DIR__ . '/../vendor/autoload.php';
 
-// Instantiate PHP-DI ContainerBuilder
+// Instancia o construtor de contêiner PHP-DI
 $containerBuilder = new ContainerBuilder();
 
-if (false) { // Should be set to true in production
-	$containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
+// Ativa a compilação apenas em produção
+if (true) { // Deve ser definido como true em produção
+    $containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
 }
 
-// Set up settings
+// Carrega as configurações do aplicativo
 $settings = require __DIR__ . '/../app/settings.php';
-$settings($containerBuilder);
-
-// Set up dependencies
 $dependencies = require __DIR__ . '/../app/dependencies.php';
-$dependencies($containerBuilder);
-
-// Set up repositories
 $repositories = require __DIR__ . '/../app/repositories.php';
+
+// Aplica as configurações e dependências ao construtor de contêiner
+$settings($containerBuilder);
+$dependencies($containerBuilder);
 $repositories($containerBuilder);
 
-// Build PHP-DI Container instance
+// Constrói o contêiner PHP-DI
 $container = $containerBuilder->build();
 
-// Instantiate the app
+// Configura o contêiner para o Slim
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 $callableResolver = $app->getCallableResolver();
 
-// Register middleware
+// Registra os middlewares
 $middleware = require __DIR__ . '/../app/middleware.php';
 $middleware($app);
 
-// Register routes
+// Registra as rotas
 $routes = require __DIR__ . '/../app/routes.php';
 $routes($app);
 
@@ -54,32 +56,32 @@ $displayErrorDetails = $settings->get('displayErrorDetails');
 $logError = $settings->get('logError');
 $logErrorDetails = $settings->get('logErrorDetails');
 
-// Create Request object from globals
+// Cria uma instância do objeto Request a partir das variáveis globais
 $serverRequestCreator = ServerRequestCreatorFactory::create();
 $request = $serverRequestCreator->createServerRequestFromGlobals();
 
-// Create Error Handler
+// Cria o manipulador de erros
 $responseFactory = $app->getResponseFactory();
 $errorHandler = new HttpErrorHandler($callableResolver, $responseFactory);
 
-// Create Shutdown Handler
+// Cria o manipulador de encerramento
 $shutdownHandler = new ShutdownHandler($request, $errorHandler, $displayErrorDetails);
 register_shutdown_function($shutdownHandler);
 
-// Add Routing Middleware
+// Adiciona o middleware de roteamento
 $app->addRoutingMiddleware();
 
-// Add Body Parsing Middleware
+// Adiciona o middleware de análise de corpo
 $app->addBodyParsingMiddleware();
 
-// Ignorar pasta do projeto da url para o funcionamento da API
+// Define um caminho base para a aplicação (comentado para manter a flexibilidade)
 // $app->setBasePath('/muciloneventos');
 
-// Add Error Middleware
+// Adiciona o middleware de erro
 $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, $logError, $logErrorDetails);
 $errorMiddleware->setDefaultErrorHandler($errorHandler);
 
-// Run App & Emit Response
+// Executa a aplicação e emite a resposta
 $response = $app->handle($request);
 $responseEmitter = new ResponseEmitter();
 $responseEmitter->emit($response);

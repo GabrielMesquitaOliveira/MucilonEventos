@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @noinspection PhpUndefinedClassInspection
+ * @noinspection PhpUnused
+ * @noinspection UnknownInspectionInspection
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Infrastructure\Persistence\User;
@@ -9,8 +15,16 @@ use App\Domain\User\UserNotFoundException;
 use App\Infrastructure\Persistence\User\InMemoryUserRepository;
 use Tests\TestCase;
 
+/**
+ * Class InMemoryUserRepositoryTest
+ *
+ * @package Tests\Infrastructure\Persistence\User
+ */
 class InMemoryUserRepositoryTest extends TestCase
 {
+    /**
+     * Testa o método findAll da classe InMemoryUserRepository.
+     */
     public function testFindAll()
     {
         $user = new User(1, 'bill.gates', 'Bill', 'Gates');
@@ -20,6 +34,9 @@ class InMemoryUserRepositoryTest extends TestCase
         $this->assertEquals([$user], $userRepository->findAll());
     }
 
+    /**
+     * Testa o método findAllUsersByDefault da classe InMemoryUserRepository.
+     */
     public function testFindAllUsersByDefault()
     {
         $users = [
@@ -35,6 +52,9 @@ class InMemoryUserRepositoryTest extends TestCase
         $this->assertEquals(array_values($users), $userRepository->findAll());
     }
 
+    /**
+     * Testa o método findUserOfId da classe InMemoryUserRepository.
+     */
     public function testFindUserOfId()
     {
         $user = new User(1, 'bill.gates', 'Bill', 'Gates');
@@ -44,6 +64,9 @@ class InMemoryUserRepositoryTest extends TestCase
         $this->assertEquals($user, $userRepository->findUserOfId(1));
     }
 
+    /**
+     * Testa se o método findUserOfId lança a exceção UserNotFoundException da classe InMemoryUserRepository.
+     */
     public function testFindUserOfIdThrowsNotFoundException()
     {
         $userRepository = new InMemoryUserRepository([]);

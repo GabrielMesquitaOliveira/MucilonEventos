@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @noinspection PhpUnused
+ * @noinspection UnknownInspectionInspection
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Application\Actions;
@@ -11,8 +16,16 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
+/**
+ * Class ActionTest
+ *
+ * @package Tests\Application\Actions
+ */
 class ActionTest extends TestCase
 {
+    /**
+     * Testa se a ação define o código HTTP na resposta.
+     */
     public function testActionSetsHttpCodeInRespond()
     {
         $app = $this->getAppInstance();
@@ -20,9 +33,8 @@ class ActionTest extends TestCase
         $logger = $container->get(LoggerInterface::class);
 
         $testAction = new class ($logger) extends Action {
-            public function __construct(
-                LoggerInterface $loggerInterface
-            ) {
+            public function __construct(LoggerInterface $loggerInterface)
+            {
                 parent::__construct($loggerInterface);
             }
 
@@ -46,6 +58,9 @@ class ActionTest extends TestCase
         $this->assertEquals(202, $response->getStatusCode());
     }
 
+    /**
+     * Testa se a ação define o código HTTP e os dados na resposta.
+     */
     public function testActionSetsHttpCodeRespondData()
     {
         $app = $this->getAppInstance();
@@ -53,9 +68,8 @@ class ActionTest extends TestCase
         $logger = $container->get(LoggerInterface::class);
 
         $testAction = new class ($logger) extends Action {
-            public function __construct(
-                LoggerInterface $loggerInterface
-            ) {
+            public function __construct(LoggerInterface $loggerInterface)
+            {
                 parent::__construct($loggerInterface);
             }
 

@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @noinspection PhpUndefinedClassInspection
+ * @noinspection PhpUnused
+ * @noinspection UnknownInspectionInspection
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Domain\User;
@@ -7,8 +13,18 @@ namespace Tests\Domain\User;
 use App\Domain\User\User;
 use Tests\TestCase;
 
+/**
+ * Class UserTest
+ *
+ * @package Tests\Domain\User
+ */
 class UserTest extends TestCase
 {
+    /**
+     * Provedor de dados para testes de getters.
+     *
+     * @return array
+     */
     public function userProvider(): array
     {
         return [
@@ -21,6 +37,8 @@ class UserTest extends TestCase
     }
 
     /**
+     * Testa os métodos getters da classe User.
+     *
      * @dataProvider userProvider
      * @param int    $id
      * @param string $username
@@ -38,6 +56,8 @@ class UserTest extends TestCase
     }
 
     /**
+     * Testa o método JsonSerialize da classe User.
+     *
      * @dataProvider userProvider
      * @param int    $id
      * @param string $username

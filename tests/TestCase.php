@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Declaração de tipos estritos para este arquivo.
+ *
+ * Este arquivo contém uma classe TestCase usada para testes PHPUnit.
+ * Ele define métodos úteis para inicializar uma instância do aplicativo Slim para testes
+ * e criar solicitações HTTP para simular interações com o aplicativo.
+ */
+
 declare(strict_types=1);
 
 namespace Tests;
@@ -16,45 +24,50 @@ use Slim\Psr7\Headers;
 use Slim\Psr7\Request as SlimRequest;
 use Slim\Psr7\Uri;
 
+/**
+ * Classe base para testes PHPUnit.
+ */
 class TestCase extends PHPUnit_TestCase
 {
     use ProphecyTrait;
 
     /**
+     * Obtém uma instância do aplicativo Slim configurada para testes.
+     *
      * @return App
      * @throws Exception
      */
     protected function getAppInstance(): App
     {
-        // Instantiate PHP-DI ContainerBuilder
+        // Instancia o construtor do contêiner PHP-DI
         $containerBuilder = new ContainerBuilder();
 
-        // Container intentionally not compiled for tests.
+        // O contêiner não é compilado intencionalmente para testes.
 
-        // Set up settings
+        // Configuração de definições
         $settings = require __DIR__ . '/../app/settings.php';
         $settings($containerBuilder);
 
-        // Set up dependencies
+        // Configuração de dependências
         $dependencies = require __DIR__ . '/../app/dependencies.php';
         $dependencies($containerBuilder);
 
-        // Set up repositories
+        // Configuração de repositórios
         $repositories = require __DIR__ . '/../app/repositories.php';
         $repositories($containerBuilder);
 
-        // Build PHP-DI Container instance
+        // Constrói a instância do contêiner PHP-DI
         $container = $containerBuilder->build();
 
-        // Instantiate the app
+        // Instancia o aplicativo Slim
         AppFactory::setContainer($container);
         $app = AppFactory::create();
 
-        // Register middleware
+        // Registra middleware
         $middleware = require __DIR__ . '/../app/middleware.php';
         $middleware($app);
 
-        // Register routes
+        // Registra rotas
         $routes = require __DIR__ . '/../app/routes.php';
         $routes($app);
 
@@ -62,6 +75,8 @@ class TestCase extends PHPUnit_TestCase
     }
 
     /**
+     * Cria uma solicitação HTTP para testes.
+     *
      * @param string $method
      * @param string $path
      * @param array  $headers
