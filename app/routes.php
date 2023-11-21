@@ -3,7 +3,6 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
-use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 
 /**
  * Configuração de rotas para um aplicativo Slim.
@@ -31,6 +30,6 @@ return function (App $app) {
     foreach (glob(__DIR__ . '/routes/*.php') as $file) {
         require_once($file);
     }
-    
+
 };
 

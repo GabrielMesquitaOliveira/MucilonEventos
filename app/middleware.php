@@ -34,6 +34,7 @@ return function (App $app) {
         "secret" => '12345000',
         "algorithm" => ["HS256"],
         "attribute" => "jwt",
+        "ignore"=>["/api/token"],
         "error" => function ($response, $arguments) {
             // Prepara os dados de erro em formato JSON
             $data["status"] = "error";

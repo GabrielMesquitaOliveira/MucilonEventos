@@ -19,7 +19,7 @@ require __DIR__ . '/../vendor/autoload.php';
 $containerBuilder = new ContainerBuilder();
 
 // Ativa a compilação apenas em produção
-if (true) { // Deve ser definido como true em produção
+if (false) { // Deve ser definido como true em produção
     $containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
 }
 
