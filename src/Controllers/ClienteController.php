@@ -75,7 +75,6 @@ class ClienteController
         $data = $request->getParsedBody();
         $email = $data['email'] ?? '';
         $senha = $data['senha'] ?? '';
-
         $cliente = Cliente::autenticarCliente($email, $senha);
 
         if ($cliente) {
@@ -84,11 +83,11 @@ class ClienteController
 
             $response->getBody()->write(json_encode(['token' => $token]));
             return $response->withHeader('Content-Type', 'application/json');
+        } else {
+            // Autenticação falhou
+            $response->getBody()->write(json_encode(['error' => 'Autenticação falhou', 'data' => $data ]));
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
-
-        // Autenticação falhou
-        $response->getBody()->write(json_encode(['error' => 'Autenticação falhou']));
-        return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
     }
 
     /**

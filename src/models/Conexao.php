@@ -7,7 +7,7 @@ namespace App\models;
 class Conexao
 {
     // Propriedade estática para armazenar a conexão
-    protected static $con;
+    public static $con;
 
     /**
      * Método para estabelecer a conexão com o banco de dados.

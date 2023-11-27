@@ -124,7 +124,7 @@ class Cliente extends Conexao
     {
         $cliente = self::obterClientePorEmail($email);
 
-        if ($cliente && password_verify($senha, $cliente['senha'])) {
+        if ($cliente && $senha == $cliente['senha']) {
             // Autenticação bem-sucedida, você pode gerar o token JWT aqui
             // Exemplo básico: retornar os detalhes do cliente (ou apenas o ID) que será usado para gerar o token
             return $cliente;
@@ -136,7 +136,7 @@ class Cliente extends Conexao
     // Adicione este método para obter o cliente por email
     public static function obterClientePorEmail($email)
     {
-        $stmt = self::$con->prepare("SELECT * FROM cliente WHERE email = ?");
+        $stmt = self::getConexao()->prepare("SELECT * FROM cliente WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
 

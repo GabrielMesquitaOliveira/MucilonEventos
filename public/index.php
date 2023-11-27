@@ -75,7 +75,7 @@ $app->addRoutingMiddleware();
 $app->addBodyParsingMiddleware();
 
 // Define um caminho base para a aplicação (comentado para manter a flexibilidade)
-// $app->setBasePath('/muciloneventos');
+$app->setBasePath('/muciloneventos');
 
 // Adiciona o middleware de erro
 $errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, $logError, $logErrorDetails);
