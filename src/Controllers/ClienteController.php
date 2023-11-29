@@ -146,4 +146,12 @@ class ClienteController
 
         return $token;
     }
+
+    public function token(Request $request, Response $response): Response
+    {
+        $token = $request->getAttribute("token");
+        $response->getBody()->write(json_encode(['token' => $token]));
+        return $response->withHeader('Content-Type', 'application/json');
+
+    }
 }

@@ -30,11 +30,9 @@ return function (App $app) {
          *
          * @return \Slim\Psr7\Response Resposta Slim com detalhes de erro em formato JSON.
          */
-        "relaxed" => ["localhost", "example.com"],
         "secret" => '12345000',
         "algorithm" => ["HS256"],
-        "attribute" => "jwt",
-        "ignore" => ["/muciloneventos/clientes/autenticar", "/muciloneventos/clientes/create"],
+        "ignore" => ["/muciloneventos/clientes/autenticar", "/muciloneventos/clientes/create", "/muciloneventos/clientes/token/test"],
         "error" => function ($response, $arguments) {
             // Prepara os dados de erro em formato JSON
             $data["status"] = "error";

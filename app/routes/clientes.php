@@ -23,4 +23,6 @@ $app->group('/clientes', function (Group $group) {
 
     // Rota para autenticação do cliente e obtenção de token JWT
     $group->post('/autenticar', [ClienteController::class, 'autenticarCliente']);
+
+    $group->get('/token/test', [ClienteController::class,'token']);
 });
