@@ -25,42 +25,67 @@ class ClienteController
 
     public function obterCliente(Request $request, Response $response, array $args): Response
     {
-        $id = $args['id'];
-        $cliente = Cliente::obterCliente($id);
+        $token = $request->getAttribute("token");
 
-        $response->getBody()->write(json_encode($cliente));
-        return $response->withHeader('Content-Type', 'application/json');
+        if (in_array("read", $token["scope"])) {
+            $id = $args['id'];
+            $cliente = Cliente::obterCliente($id);
+
+            $response->getBody()->write(json_encode($cliente));
+            return $response->withHeader('Content-Type', 'application/json');
+        } else {
+            return $response->withStatus(401);
+        }
     }
 
     public function atualizarCliente(Request $request, Response $response, array $args): Response
     {
-        $id = $args['id'];
-        $data = $request->getParsedBody();
-        $nome = $data['nome'] ?? '';
-        $email = $data['email'] ?? '';
-        $telefone = $data['telefone'] ?? '';
+        $token = $request->getAttribute("token");
 
-        $message = Cliente::atualizarCliente($id, $nome, $email, $telefone);
+        if (in_array("write", $token["scope"])) {
+            $id = $args['id'];
+            $data = $request->getParsedBody();
+            $nome = $data['nome'] ?? '';
+            $email = $data['email'] ?? '';
+            $telefone = $data['telefone'] ?? '';
 
-        $response->getBody()->write(json_encode(['message' => $message]));
-        return $response->withHeader('Content-Type', 'application/json');
+            $message = Cliente::atualizarCliente($id, $nome, $email, $telefone);
+
+            $response->getBody()->write(json_encode(['message' => $message]));
+            return $response->withHeader('Content-Type', 'application/json');
+        } else {
+            /* No scope so respond with 401 Unauthorized */
+            return $response->withStatus(401);
+        }
     }
 
     public function excluirCliente(Request $request, Response $response, array $args): Response
     {
-        $id = $args['id'];
-        $message = Cliente::excluirCliente($id);
+        $token = $request->getAttribute("token");
 
-        $response->getBody()->write(json_encode(['message' => $message]));
-        return $response->withHeader('Content-Type', 'application/json');
+        if (in_array("delete", $token["scope"])) {
+            $id = $args['id'];
+            $message = Cliente::excluirCliente($id);
+
+            $response->getBody()->write(json_encode(['message' => $message]));
+            return $response->withHeader('Content-Type', 'application/json');
+        } else {
+            return $response->withStatus(401);
+        }
     }
 
     public function listarClientes(Request $request, Response $response): Response
     {
-        $clientes = Cliente::listarClientes();
+        $token = $request->getAttribute("token");
 
-        $response->getBody()->write(json_encode($clientes));
-        return $response->withHeader('Content-Type', 'application/json');
+        if (in_array("read", $token["scope"])) {
+            $clientes = Cliente::listarClientes();
+
+            $response->getBody()->write(json_encode($clientes));
+            return $response->withHeader('Content-Type', 'application/json');
+        } else {
+            return $response->withStatus(401);
+        }
     }
     /**
      * Autentica um cliente e retorna um token JWT em caso de sucesso.
@@ -85,7 +110,7 @@ class ClienteController
             return $response->withHeader('Content-Type', 'application/json');
         } else {
             // Autenticação falhou
-            $response->getBody()->write(json_encode(['error' => 'Autenticação falhou', 'data' => $data ]));
+            $response->getBody()->write(json_encode(['error' => 'Autenticação falhou']));
             return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
         }
     }

@@ -124,7 +124,7 @@ class Cliente extends Conexao
     {
         $cliente = self::obterClientePorEmail($email);
 
-        if ($cliente && $senha == $cliente['senha']) {
+        if ($cliente && password_verify($senha, $cliente['senha'])) {
             // Autenticação bem-sucedida, você pode gerar o token JWT aqui
             // Exemplo básico: retornar os detalhes do cliente (ou apenas o ID) que será usado para gerar o token
             return $cliente;

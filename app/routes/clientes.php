@@ -11,7 +11,7 @@ use App\Controllers\ClienteController;
 
 $app->group('/clientes', function (Group $group) {
 
-    $group->post('', [ClienteController::class, 'criarCliente']);
+    $group->post('/create', [ClienteController::class, 'criarCliente']);
 
     $group->get('/{id}', [ClienteController::class, 'obterCliente']);
 

@@ -102,4 +102,46 @@ class Categoria extends Conexao
             return "Erro ao excluir categoria: " . $stmt->error;
         }
     }
+
+     /**
+     * Atualiza uma categoria no banco de dados.
+     *
+     * @param int $id ID da categoria a ser atualizada.
+     * @param string $nome Novo nome da categoria.
+     * @param string $descricao Nova descrição da categoria.
+     *
+     * @return string Mensagem indicando o resultado da operação.
+     */
+    public static function atualizarCategoria($id, $nome, $descricao)
+    {
+        // Prepara a consulta SQL para atualizar uma categoria
+        $stmt = self::getConexao()->prepare("UPDATE categoria SET nome = ?, descricao = ? WHERE id = ?");
+        $stmt->bind_param("ssi", $nome, $descricao, $id);
+
+        // Executa a consulta SQL
+        if ($stmt->execute()) {
+            return "Categoria atualizada com sucesso!";
+        } else {
+            return "Erro ao atualizar categoria: " . $stmt->error;
+        }
+    }
+
+    /**
+     * Obtém uma lista de todas as categorias.
+     *
+     * @return array Retorna um array de arrays associativos contendo informações de todas as categorias.
+     */
+    public static function listarCategorias()
+    {
+        // Executa a consulta SQL para obter todas as categorias
+        $result = self::getConexao()->query("SELECT * FROM categoria");
+
+        // Processa o resultado e retorna a lista de categorias
+        $categorias = array();
+        while ($categoria = $result->fetch_assoc()) {
+            $categorias[] = $categoria;
+        }
+
+        return $categorias;
+    }
 }

@@ -48,12 +48,26 @@ class Artista extends Conexao
         return $artista;
     }
 
+    public static function atualizarArtista($id, $nome, $descricao)
+    {
+        // Prepara a consulta SQL para atualizar um artista pelo ID
+        $stmt = self::getConexao()->prepare("UPDATE artista SET nome = ?, descricao = ? WHERE id = ?");
+        $stmt->bind_param("ssi", $nome, $descricao, $id);
+
+        // Executa a consulta SQL
+        if ($stmt->execute()) {
+            return "Artista atualizado com sucesso!";
+        } else {
+            return "Erro ao atualizar artista: " . $stmt->error;
+        }
+    }
+
     /**
      * Obtém uma lista de todos os artistas.
      *
      * @return array Retorna um array de arrays associativos contendo informações de todos os artistas.
      */
-    public static function buscarArtistas()
+    public static function listarArtistas()
     {
         // Executa a consulta SQL para obter todos os artistas
         $result = self::getConexao()->query("SELECT * FROM artista");
