@@ -23,7 +23,6 @@ class CategoriaController
 
         $data = $request->getParsedBody();
         $nome = $data['nome'] ?? '';
-        $descricao = $data['descricao'] ?? '';
 
         $message = Categoria::criarCategoria($nome);
 

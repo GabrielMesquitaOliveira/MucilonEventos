@@ -15,7 +15,7 @@ class Conexao
     public static function conectar()
     {
         // Cria uma nova instância de mysqli (substitua as credenciais conforme necessário)
-        self::$con = new \mysqli("localhost", "root", "", "mucilon");
+        self::$con = new \mysqli("localhost", "root", "", "event");
 
         // Verifica se houve algum erro na conexão
         if (mysqli_connect_error()) {

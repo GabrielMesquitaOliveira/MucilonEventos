@@ -24,13 +24,13 @@ class Evento extends Conexao
      *
      * @return string Mensagem indicando o resultado da operação.
      */
-    public static function criarEvento($nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador)
+    public static function criarEvento($nomeEvento, $dataEvento, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador)
     {
         // Prepara a instrução SQL
-        $stmt = self::getConexao()->prepare("INSERT INTO evento (nome_evento, data_evento, local, descricao, artista_id, categoria_id, evento_id, local_id, contador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = self::getConexao()->prepare("INSERT INTO evento (nome_evento, data_evento, descricao, artista_id, categoria_id, evento_id, local_id, contador) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         // Vincula os parâmetros à instrução SQL
-        $stmt->bind_param("ssssiiiii", $nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador);
+        $stmt->bind_param("sssiiiii", $nomeEvento, $dataEvento, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador);
 
         // Executa a instrução SQL
         if ($stmt->execute()) {
@@ -81,13 +81,13 @@ class Evento extends Conexao
      *
      * @return string Mensagem indicando o resultado da operação.
      */
-    public static function atualizarEvento($id, $nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador)
+    public static function atualizarEvento($id, $nomeEvento, $dataEvento, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador)
     {
         // Prepara a instrução SQL
-        $stmt = self::getConexao()->prepare("UPDATE evento SET nome_evento = ?, data_evento = ?, local = ?, descricao = ?, artista_id = ?, categoria_id = ?, evento_id = ?, local_id = ?, contador = ? WHERE id = ?");
+        $stmt = self::getConexao()->prepare("UPDATE evento SET nome_evento = ?, data_evento = ?, descricao = ?, artista_id = ?, categoria_id = ?, evento_id = ?, local_id = ?, contador = ? WHERE id = ?");
 
         // Vincula os parâmetros à instrução SQL
-        $stmt->bind_param("ssssiiiiii", $nomeEvento, $dataEvento, $local, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador, $id);
+        $stmt->bind_param("sssiiiiii", $nomeEvento, $dataEvento, $descricao, $artistaId, $categoriaId, $eventoId, $localId, $contador, $id);
 
         // Executa a instrução SQL
         if ($stmt->execute()) {
